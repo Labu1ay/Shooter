@@ -38,13 +38,16 @@ public class EnemyController : MonoBehaviour {
         _newPosition = Vector3.LerpUnclamped(_previousPosition, _position, 1 + distanceToNewPosition);
         _time = Time.time; 
     }
+    
     private void Update() {
             transform.position = Vector3.Lerp(transform.position, _newPosition, 15f * Time.deltaTime);  
     }
+
     private void AddPing(float ping){
         _previousPings.Enqueue(ping);
         if(_previousPings.Count > 5) _previousPings.Dequeue();
     }
+
     private float GetAveragePing(){
         float averagePing = 0f;
         foreach (var ping in _previousPings){
