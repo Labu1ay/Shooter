@@ -18,11 +18,20 @@ public class EnemyController : MonoBehaviour {
         }
     } 
     private float _lastReceiveTime = 0f;
-
-    private void Start() {
+    private Player _player;
+    private void Awake() {
         _enemyCharacter = GetComponent<EnemyCharacter>();
     }
-
+    public void Init(Player player){
+        _player = player;
+        _enemyCharacter.SetSpeed(player.speed);
+        player.OnChange += OnChange;
+    }
+    public void Destroy(){
+        _player.OnChange -= OnChange;
+        Destroy(gameObject);
+    }
+    
     private void SaveReceiveTime(float delay){
         _receiveTimeInterval.Enqueue(delay);
         if(_receiveTimeInterval.Count > 5) _receiveTimeInterval.Dequeue();
@@ -32,7 +41,7 @@ public class EnemyController : MonoBehaviour {
         SaveReceiveTime(Time.time -_lastReceiveTime);
 
         Vector3 position = _enemyCharacter.transform.position;
-        Vector3 velocity = Vector3.zero;
+        Vector3 velocity = _enemyCharacter.Velocity;
 
         foreach (var dataChange in changes){
             switch(dataChange.Field){
@@ -53,6 +62,12 @@ public class EnemyController : MonoBehaviour {
                     break;
                 case "vZ":
                     velocity.z = (float)dataChange.Value;
+                    break;
+                case "rX":
+                    _enemyCharacter.SetRotateX((float)dataChange.Value);
+                    break;
+                case "rY":
+                    _enemyCharacter.SetRotateY((float)dataChange.Value);
                     break;
                 default:
                     Debug.Log("Не обрабатывается изменение поля " + dataChange.Field);
