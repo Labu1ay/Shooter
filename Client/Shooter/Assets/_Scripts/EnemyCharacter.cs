@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class EnemyCharacter : Character {
     [SerializeField] private Transform _head;
+    [SerializeField] private Transform _body;
+    private bool _isSquating;
     public Vector3 targetPosition { get; private set; } = Vector3.zero;
     private float _velocityMagnitude = 0;
     private void Start() {
@@ -16,9 +18,12 @@ public class EnemyCharacter : Character {
         }else{
             transform.position = targetPosition;
         }
+        SetBodyScale(_isSquating);
     }
 
     public void SetSpeed(float value) => Speed = value;
+    public void SetSpeedSquat(float value) => SpeedScale = value;
+    public void SetScaleState(bool value) => _isSquating = value;
 
     public void SetMovement(in Vector3 position, in Vector3 velocity, in float averageInterval){
         targetPosition = position + (velocity * averageInterval);
@@ -32,5 +37,13 @@ public class EnemyCharacter : Character {
     }
     public void SetRotateY(float value){
         transform.localEulerAngles = new Vector3(0f, value, 0f);
+    }
+    public void SetBodyScale(bool isSquating){
+        float bodyScale = 1f;
+
+        if(isSquating) bodyScale = 0.5f;
+        else bodyScale = 1f;
+
+        _body.localScale = Vector3.MoveTowards(_body.localScale, new Vector3(1f, 1f, bodyScale), Time.deltaTime * SpeedScale);
     }
 }

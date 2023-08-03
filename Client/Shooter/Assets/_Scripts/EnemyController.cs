@@ -25,7 +25,8 @@ public class EnemyController : MonoBehaviour {
     }
     public void Init(Player player){
         _player = player;
-        _enemyCharacter.SetSpeed(player.speed);
+        _enemyCharacter.SetSpeed(_player.speed);
+        _enemyCharacter.SetSpeedSquat(_player.spSqt);
         player.OnChange += OnChange;
     }
 
@@ -77,6 +78,9 @@ public class EnemyController : MonoBehaviour {
                     break;
                 case "rY":
                     _enemyCharacter.SetRotateY((float)dataChange.Value);
+                    break;
+                case "sq":
+                    _enemyCharacter.SetScaleState((bool)dataChange.Value);
                     break;
                 default:
                     Debug.Log("Не обрабатывается изменение поля " + dataChange.Field);

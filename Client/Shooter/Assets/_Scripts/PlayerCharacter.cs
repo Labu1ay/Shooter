@@ -8,11 +8,14 @@ public class PlayerCharacter : Character {
     private Rigidbody _rigidbody;
     private CheckFly _checkFly;
     [SerializeField] private Transform _head;
+    [SerializeField] private Transform _body;
     [SerializeField] private Transform _cameraPoint;
+
     [SerializeField] private float _maxHeadAngle = 90f;
     [SerializeField] private float _minHeadAngle = -90f;
     [SerializeField] private float _jumpForce = 5f;
     [SerializeField] private float _jumpDelay = 0.2f;
+
     private float _inputH;
     private float _inputV;
     private float _rotateY;
@@ -81,5 +84,9 @@ public class PlayerCharacter : Character {
         if(Time.time - _jumpTime < _jumpDelay) return;
         _jumpTime = Time.time;
         _rigidbody.AddForce(0f, _jumpForce, 0f, ForceMode.VelocityChange);
+    }
+
+    public void BodyScale(float value){
+        _body.localScale = Vector3.MoveTowards(_body.localScale, new Vector3(1f, 1f, value), Time.deltaTime * SpeedScale);
     }
 }
