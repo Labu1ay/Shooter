@@ -16,6 +16,7 @@ public class PlayerCharacter : Character {
     private float _inputH;
     private float _inputV;
     private float _rotateY;
+    private float _rotateX;
     private float _currentRotateX;
     private float _jumpTime;
 
@@ -33,12 +34,15 @@ public class PlayerCharacter : Character {
         camera.localRotation = Quaternion.identity;
         
     }
-    public void SetInput(float h, float v, float RotateY){
+    public void SetInput(float h, float v, float RotateY, float RotateX){
         _inputH = h;
         _inputV = v;
         _rotateY += RotateY;
+        _rotateX = RotateX;
     }
-    
+    private void Update() {
+        RotateX(_rotateX);
+    }
     private void FixedUpdate() {
         Move();
         RotateY();
