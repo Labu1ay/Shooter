@@ -8,7 +8,6 @@ public class PlayerCharacter : Character {
     private Rigidbody _rigidbody;
     private CheckFly _checkFly;
     [SerializeField] private Transform _head;
-    [SerializeField] private Transform _body;
     [SerializeField] private Transform _cameraPoint;
 
     [SerializeField] private float _maxHeadAngle = 90f;
@@ -28,9 +27,9 @@ public class PlayerCharacter : Character {
         _checkFly = GetComponent<CheckFly>();
     }
     private void Start() {
-        CameraInitialization();
+        CameraInit();
     }
-    private void CameraInitialization(){
+    private void CameraInit(){
         Transform camera = Camera.main.transform;
         camera.parent = _cameraPoint;
         camera.localPosition = Vector3.zero;
@@ -84,9 +83,5 @@ public class PlayerCharacter : Character {
         if(Time.time - _jumpTime < _jumpDelay) return;
         _jumpTime = Time.time;
         _rigidbody.AddForce(0f, _jumpForce, 0f, ForceMode.VelocityChange);
-    }
-
-    public void BodyScale(float value){
-        _body.localScale = Vector3.MoveTowards(_body.localScale, new Vector3(1f, 1f, value), Time.deltaTime * SpeedScale);
     }
 }

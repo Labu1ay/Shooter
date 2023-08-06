@@ -18,7 +18,7 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager> {
     private async void Connect(){
         Dictionary<string, object> data = new Dictionary<string, object>(){
             { "speed", _player.Speed },
-            { "spSqt", _player.SpeedScale }
+            { "spSqt", _player.SpeedSquating }
         };
 
         _room = await Instance.client.JoinOrCreate<State>("state_handler", data);
