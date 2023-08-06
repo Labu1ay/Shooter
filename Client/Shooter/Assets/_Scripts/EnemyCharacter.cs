@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class EnemyCharacter : Character {
     [SerializeField] private Transform _head;
+    [SerializeField] private float _rotationSpeed = 20f;
     public Vector3 targetPosition { get; private set; } = Vector3.zero;
     private float _velocityMagnitude = 0;
+    private Vector3 _localEulerAnglesX;
+    private Vector3 _localEulerAnglesY;
     private void Start() {
         targetPosition = transform.position;
     }
@@ -16,6 +19,8 @@ public class EnemyCharacter : Character {
         }else{
             transform.position = targetPosition;
         }
+        _head.localRotation = Quaternion.Lerp(_head.localRotation, Quaternion.Euler(_localEulerAnglesX), _rotationSpeed * Time.deltaTime);
+        transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.Euler(_localEulerAnglesY), _rotationSpeed * Time.deltaTime);
     }
 
     public void SetSpeed(float value) => Speed = value;
@@ -29,9 +34,9 @@ public class EnemyCharacter : Character {
     }
 
     public void SetRotateX(float value){
-        _head.localEulerAngles = new Vector3(value, 0f,0f);
+        _localEulerAnglesX = new Vector3(value, 0f, 0f);
     }
     public void SetRotateY(float value){
-        transform.localEulerAngles = new Vector3(0f, value, 0f);
+        _localEulerAnglesY = new Vector3(0f, value, 0f);
     }
 }
