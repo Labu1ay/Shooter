@@ -23,10 +23,12 @@ public class EnemyController : MonoBehaviour {
     private void Awake() {
         _enemyCharacter = GetComponent<EnemyCharacter>();
     }
-    public void Init(Player player){
+    public void Init(string key, Player player){
+        _enemyCharacter.Init(key);
+
         _player = player;
         _enemyCharacter.SetSpeed(player.speed);
-        _enemyCharacter.SetMaxHP(player.hp);
+        _enemyCharacter.SetMaxHP(player.maxHP);
         player.OnChange += OnChange;
     }
 

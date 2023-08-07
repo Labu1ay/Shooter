@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using Colyseus.Schema;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CheckFly))]
 public class PlayerCharacter : Character {
+    [SerializeField] private Health _health;
     private Rigidbody _rigidbody;
     private CheckFly _checkFly;
     [SerializeField] private Transform _head;
@@ -26,6 +28,9 @@ public class PlayerCharacter : Character {
     }
     private void Start() {
         CameraInitialization();
+
+        _health.SetMax(MaxHealth);
+        _health.SetCurrent(MaxHealth);
     }
     private void CameraInitialization(){
         Transform camera = Camera.main.transform;
@@ -81,5 +86,17 @@ public class PlayerCharacter : Character {
         if(Time.time - _jumpTime < _jumpDelay) return;
         _jumpTime = Time.time;
         _rigidbody.AddForce(0f, _jumpForce, 0f, ForceMode.VelocityChange);
+    }
+    internal void OnChange(List<DataChange> changes){
+         foreach (var dataChange in changes){
+            switch(dataChange.Field){
+                case "currentHP":
+                    _health.SetCurrent((sbyte)dataChange.Value);
+                    break;
+                default:
+                    Debug.Log("Не обрабатывается изменение поля " + dataChange.Field);
+                    break;
+            }
+        }
     }
 }
