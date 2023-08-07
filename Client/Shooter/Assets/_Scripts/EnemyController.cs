@@ -7,6 +7,7 @@ using UnityEngine;
 [RequireComponent(typeof(EnemyCharacter))]
 public class EnemyController : MonoBehaviour {
     private EnemyCharacter _enemyCharacter;
+    private Squat _squat;
     [SerializeField] private EnemyGun _enemyGun;
     private Queue<float> _receiveTimeInterval = new Queue<float>();
     private float AverageInterval{
@@ -22,13 +23,15 @@ public class EnemyController : MonoBehaviour {
     private Player _player;
     private void Awake() {
         _enemyCharacter = GetComponent<EnemyCharacter>();
+        _squat = GetComponent<Squat>();
     }
     public void Init(string key, Player player){
         _enemyCharacter.Init(key);
 
         _player = player;
-        _enemyCharacter.SetSpeed(player.speed);
         _enemyCharacter.SetMaxHP(player.maxHP);
+        _enemyCharacter.SetSpeed(player.speed);
+        _enemyCharacter.SetSpeedSquat(_player.spSqt);
         player.OnChange += OnChange;
     }
 
@@ -80,6 +83,10 @@ public class EnemyController : MonoBehaviour {
                     break;
                 case "rY":
                     _enemyCharacter.SetRotateY((float)dataChange.Value);
+                    break;
+                case "sq":
+                    _squat.SetSquatState((bool)dataChange.Value);
+                    Debug.Log((bool)dataChange.Value);
                     break;
                 default:
                     Debug.Log("Не обрабатывается изменение поля " + dataChange.Field);

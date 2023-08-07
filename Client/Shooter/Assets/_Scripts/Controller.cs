@@ -7,8 +7,10 @@ public class Controller : MonoBehaviour {
     [SerializeField] private PlayerGun _gun;
     [SerializeField] private float _mouseSensetivity = 2f;
     private MultiplayerManager _multiplayerManager;
+    private Squat _squat;
     private void Start() {
         _multiplayerManager = MultiplayerManager.Instance;
+        _squat = GetComponent<Squat>();
     }
     private void Update() {
         float h = Input.GetAxisRaw("Horizontal");
@@ -21,12 +23,21 @@ public class Controller : MonoBehaviour {
 
         bool space = Input.GetKeyDown(KeyCode.Space);
 
+        if(Input.GetKeyDown(KeyCode.LeftControl)){
+            _squat.SetSquatState(true);
+            SendSquat();
+        } 
+        if(Input.GetKeyUp(KeyCode.LeftControl)){
+            _squat.SetSquatState(false);
+            SendSquat();
+        } 
+        
+
         _player.SetInput(h, v, mouseX * _mouseSensetivity, -mouseY * _mouseSensetivity);
         if(space) _player.Jump();
 
         if(isShoot && _gun.TryShoot(out ShootInfo shootInfo)) SendShoot(ref shootInfo);
-        
-        
+
         SendMove();
     }
 
@@ -49,6 +60,13 @@ public class Controller : MonoBehaviour {
             {"rY", rotateY}
         };
         _multiplayerManager.SendMessage("move", data);
+    }
+
+    private void SendSquat(){
+        Dictionary<string, object> data = new Dictionary<string, object>(){
+            { "sq", _squat.IsSquating },
+        };
+        _multiplayerManager.SendMessage("squat", data);
     }
 }
 [System.Serializable]

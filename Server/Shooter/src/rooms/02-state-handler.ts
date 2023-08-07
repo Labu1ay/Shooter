@@ -9,7 +9,10 @@ export class Player extends Schema {
     currentHP = 0;
 
     @type("number")
-    speed = 0;
+    speed = 2;
+
+    @type("number")
+    spSqt = 0;
 
     @type("number")
     pX = Math.floor(Math.random() * 50) - 25;
@@ -34,6 +37,9 @@ export class Player extends Schema {
 
     @type("number")
     rY = 0;
+
+    @type('boolean')
+    sq = false;
 }
 
 export class State extends Schema {
@@ -45,6 +51,7 @@ export class State extends Schema {
     createPlayer(sessionId: string, data: any) {
         const player = new Player();
         player.speed = data.speed;
+        player.spSqt = data.spSqt;
         player.maxHP = data.hp;
         player.currentHP = data.hp;
         this.players.set(sessionId, player);
@@ -64,6 +71,10 @@ export class State extends Schema {
         player.vZ = data.vZ;
         player.rX = data.rX;
         player.rY = data.rY;        
+    }
+
+    squatPlayer (sessionId: string, data: any) {
+        this.players.get(sessionId).sq = data.sq;
     }
 }
 
@@ -85,6 +96,9 @@ export class StateHandlerRoom extends Room<State> {
         this.onMessage("damage", (client, data) => {
             const player = this.state.players.get(data.id);
             player.currentHP -= data.value;
+        });
+        this.onMessage("squat", (client, data) => {
+            this.state.squatPlayer(client.sessionId, data);
         });
     }
 

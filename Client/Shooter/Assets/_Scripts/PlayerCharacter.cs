@@ -11,10 +11,12 @@ public class PlayerCharacter : Character {
     private CheckFly _checkFly;
     [SerializeField] private Transform _head;
     [SerializeField] private Transform _cameraPoint;
+
     [SerializeField] private float _maxHeadAngle = 90f;
     [SerializeField] private float _minHeadAngle = -90f;
     [SerializeField] private float _jumpForce = 5f;
     [SerializeField] private float _jumpDelay = 0.2f;
+
     private float _inputH;
     private float _inputV;
     private float _rotateY;
@@ -27,12 +29,12 @@ public class PlayerCharacter : Character {
         _checkFly = GetComponent<CheckFly>();
     }
     private void Start() {
-        CameraInitialization();
+        CameraInit();
 
         _health.SetMax(MaxHealth);
         _health.SetCurrent(MaxHealth);
     }
-    private void CameraInitialization(){
+    private void CameraInit(){
         Transform camera = Camera.main.transform;
         camera.parent = _cameraPoint;
         camera.localPosition = Vector3.zero;
