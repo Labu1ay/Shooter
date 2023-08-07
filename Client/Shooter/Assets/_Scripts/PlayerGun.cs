@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerGun : Gun {
-    
+    [SerializeField] private int _damage;
     [SerializeField] private Transform _bulletPoint;
     [SerializeField] private float _bulletSpeed;
     [SerializeField] private float _shootDelay = 0.1f;
@@ -19,7 +19,7 @@ public class PlayerGun : Gun {
         Vector3 velocity = _bulletPoint.forward * _bulletSpeed;
 
         _lastShootTime = Time.time;
-        Instantiate(_bulletPrefab,position, _bulletPoint.rotation).Init(velocity);
+        Instantiate(_bulletPrefab,position, _bulletPoint.rotation).Init(velocity, _damage);
         shoot?.Invoke();
 
         

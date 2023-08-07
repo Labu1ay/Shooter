@@ -6,10 +6,12 @@ using UnityEngine;
 public class Bullet : MonoBehaviour {
     [SerializeField] private float _lifeTime = 5f;
     private Rigidbody _rigidbody;
+    private int _damage;
     private void Awake() {
         _rigidbody = GetComponent<Rigidbody>();
     }
-    public void Init(Vector3 velocity){
+    public void Init(Vector3 velocity, int damage = 0){
+        _damage = damage;
         _rigidbody.velocity = velocity;
         StartCoroutine(DelayDestroy(_lifeTime));
     }
@@ -22,6 +24,9 @@ public class Bullet : MonoBehaviour {
         Destroy(gameObject);
     }
     private void OnCollisionEnter(Collision other) {
+        if(other.collider.TryGetComponent(out EnemyCharacter enemy)){
+            enemy.ApplyDamage(_damage);
+        }
         Destroy();
     }
 }
