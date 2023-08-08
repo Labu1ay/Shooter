@@ -34,6 +34,9 @@ public class EnemyCharacter : Character {
         _health.SetMax(value);
         _health.SetCurrent(value);
     } 
+    public void RestoreHP(int newValue){
+        _health.SetCurrent(newValue);
+    }
     public void SetSpeedSquat(float value) => SpeedSquating = value;
 
     public void SetMovement(in Vector3 position, in Vector3 velocity, in float averageInterval){

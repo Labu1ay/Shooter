@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MultiplayerManager : ColyseusManager<MultiplayerManager> {
+    [field: SerializeField] public LossCounter LossCounter { get; private set; }
     [SerializeField] private PlayerCharacter _player;
     [SerializeField] private EnemyController _enemy;
     private ColyseusRoom<State> _room;
@@ -52,7 +53,11 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager> {
     private void CreatePlayer(Player player){
         var position = new Vector3(player.pX, player.pY, player.pZ);
 
-        player.OnChange += Instantiate(_player, position, Quaternion.identity).OnChange;
+        var playerCharacter = Instantiate(_player, position, Quaternion.identity);
+
+        player.OnChange += playerCharacter.OnChange;
+
+        _room.OnMessage<string>("Restart", playerCharacter.GetComponent<Controller>().Restart);
     }
 
     private void CreateEnemy(string key, Player player){

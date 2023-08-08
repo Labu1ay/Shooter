@@ -92,6 +92,9 @@ public class PlayerCharacter : Character {
     internal void OnChange(List<DataChange> changes){
          foreach (var dataChange in changes){
             switch(dataChange.Field){
+                case "loss":
+                MultiplayerManager.Instance.LossCounter.SetPlayerLoss((byte)dataChange.Value);
+                    break;
                 case "currentHP":
                     _health.SetCurrent((sbyte)dataChange.Value);
                     break;
