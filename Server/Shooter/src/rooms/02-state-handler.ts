@@ -133,6 +133,7 @@ export class StateHandlerRoom extends Room<State> {
     }
 
     onJoin (client: Client, data: any) {
+        if(this.clients.length > 1) this.lock();
         client.send("hello", "world");
         this.state.createPlayer(client.sessionId, data);
     }
