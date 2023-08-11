@@ -2,6 +2,9 @@ import { Room, Client } from "colyseus";
 import { Schema, type, MapSchema } from "@colyseus/schema";
 
 export class Player extends Schema {
+    @type("int8")
+    gun = 0;
+
     @type("uint8")
     loss = 0;
 
@@ -79,6 +82,9 @@ export class State extends Schema {
     squatPlayer (sessionId: string, data: any) {
         this.players.get(sessionId).sq = data.sq;
     }
+    gunPlayer (sessionId: string, data: any) {
+        this.players.get(sessionId).gun = data.gun;
+    }
 }
 
 export class StateHandlerRoom extends Room<State> {
@@ -114,17 +120,15 @@ export class StateHandlerRoom extends Room<State> {
             for(var i = 0; i < this.clients.length; i++){
                 if(this.clients[i].id != clientID) continue;
 
-                const x = Math.floor(Math.random() * 50) - 25;
-                const z = Math.floor(Math.random() * 50) - 25;
-
-                const message = JSON.stringify
-
-                this.clients[i].send("Restart", message({x, z}));
+                this.clients[i].send("Restart", (true));
             }
         });
 
         this.onMessage("squat", (client, data) => {
             this.state.squatPlayer(client.sessionId, data);
+        });
+        this.onMessage("gun", (client, data) => {
+            this.state.gunPlayer(client.sessionId, data);
         });
     }
 
