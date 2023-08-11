@@ -4,12 +4,26 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerGun : Gun {
-    [SerializeField] private int _damage;
+    [SerializeField] private int _damage = 1;
     [SerializeField] private Transform _bulletPoint;
     [SerializeField] private float _bulletSpeed;
     [SerializeField] private float _shootDelay = 0.1f;
     private float _lastShootTime;
+    public int SelectedGun {get; private set;} = 0;
+    [SerializeField] private GunCharacteristic [] _gunCharacteristics;
+    public Action<int> ChangedGun;
     
+    public void ChangeGun(int value){
+        SelectedGun = value;
+        SetGun(value);
+
+        _shootDelay = _gunCharacteristics[value].ShootDelay;
+        _damage = _gunCharacteristics[value].Damage;
+        _bulletSpeed = _gunCharacteristics[value].Speed;
+
+        ChangedGun?.Invoke(value);
+
+    }
     public bool TryShoot(out ShootInfo info){
         info = new ShootInfo();
 
@@ -39,4 +53,12 @@ public class PlayerGun : Gun {
         yield return new WaitForSeconds(timeDelay);
         Instantiate(_bulletPrefab, _bulletPoint.position, _bulletPoint.rotation).Init(_bulletPoint.forward * _bulletSpeed);
     }
+}
+[Serializable]
+public struct GunCharacteristic {
+    public string name;
+    public float ShootDelay;
+    public int Damage;
+    public int Speed;
+
 }

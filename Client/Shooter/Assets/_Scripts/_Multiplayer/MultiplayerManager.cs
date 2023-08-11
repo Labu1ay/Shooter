@@ -8,6 +8,7 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager> {
     [field: SerializeField] public LossCounter LossCounter { get; private set; }
     [SerializeField] private PlayerCharacter _player;
     [SerializeField] private EnemyController _enemy;
+    public Action EnemyCreated;
     private ColyseusRoom<State> _room;
     private Dictionary<string, EnemyController> _enemies = new Dictionary<string, EnemyController>();
     protected override void Awake() {
@@ -57,7 +58,7 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager> {
 
         player.OnChange += playerCharacter.OnChange;
 
-        _room.OnMessage<string>("Restart", playerCharacter.GetComponent<Controller>().Restart);
+        _room.OnMessage<bool>("Restart", playerCharacter.GetComponent<Controller>().Restart);
     }
 
     private void CreateEnemy(string key, Player player){
@@ -67,6 +68,7 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager> {
         enemy.Init(key, player);
 
         _enemies.Add(key, enemy);
+        EnemyCreated?.Invoke();
     }
     private void RemoveEnemy(string key, Player player){
         if(_enemies.ContainsKey(key) == false) return;

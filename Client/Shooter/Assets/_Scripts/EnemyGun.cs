@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyGun : Gun {
+    private void Start() {
+        SetGun(0);
+    }
     public void Shoot(Vector3 position, Vector3 velocity){
         Instantiate(_bulletPrefab, position, Quaternion.identity).Init(velocity);
         shoot?.Invoke();

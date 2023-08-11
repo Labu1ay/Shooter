@@ -93,7 +93,9 @@ public class EnemyController : MonoBehaviour {
                     break;
                 case "sq":
                     _squat.SetSquatState((bool)dataChange.Value);
-                    Debug.Log((bool)dataChange.Value);
+                    break;
+                case "gun":
+                    _enemyGun.SetGun((sbyte)dataChange.Value);
                     break;
                 default:
                     Debug.Log("Не обрабатывается изменение поля " + dataChange.Field);

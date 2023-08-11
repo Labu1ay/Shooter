@@ -9,40 +9,63 @@ public class Controller : MonoBehaviour {
     [SerializeField] private PlayerGun _gun;
     [SerializeField] private float _mouseSensetivity = 2f;
     private MultiplayerManager _multiplayerManager;
+    private Spawn _spawn;
     private Squat _squat;
     private bool _hold = false;
     private void Start() {
         _multiplayerManager = MultiplayerManager.Instance;
         _squat = GetComponent<Squat>();
+        _spawn = FindObjectOfType<Spawn>();
     }
     private void Update() {
-        if(_hold) return;
-        float h = Input.GetAxisRaw("Horizontal");
-        float v = Input.GetAxisRaw("Vertical");
-
-        float mouseX = Input.GetAxis("Mouse X");
-        float mouseY = Input.GetAxis("Mouse Y");
-
-        bool isShoot = Input.GetMouseButton(0);
-
-        bool space = Input.GetKeyDown(KeyCode.Space);
-
-        if(Input.GetKeyDown(KeyCode.LeftControl)){
-            _squat.SetSquatState(true);
-            SendSquat();
-        } 
-        if(Input.GetKeyUp(KeyCode.LeftControl)){
-            _squat.SetSquatState(false);
-            SendSquat();
-        } 
         
+        if(!_hold) {
+            float h = Input.GetAxisRaw("Horizontal");
+            float v = Input.GetAxisRaw("Vertical");
 
-        _player.SetInput(h, v, mouseX * _mouseSensetivity, -mouseY * _mouseSensetivity);
-        if(space) _player.Jump();
+            float mouseX = Input.GetAxis("Mouse X");
+            float mouseY = Input.GetAxis("Mouse Y");
 
-        if(isShoot && _gun.TryShoot(out ShootInfo shootInfo)) SendShoot(ref shootInfo);
+            bool isShoot = Input.GetMouseButton(0);
 
+            bool space = Input.GetKeyDown(KeyCode.Space);
+
+            if(Input.GetKeyDown(KeyCode.LeftControl)){
+                _squat.SetSquatState(true);
+                SendSquat();
+            } 
+            if(Input.GetKeyUp(KeyCode.LeftControl)){
+                _squat.SetSquatState(false);
+                SendSquat();
+            } 
+            if(Input.GetKeyDown(KeyCode.Alpha1)) {
+                _gun.ChangeGun(0); 
+                SendGun();
+            }
+            if(Input.GetKeyDown(KeyCode.Alpha2)) {
+                _gun.ChangeGun(1); 
+                SendGun();
+            }
+            if(Input.GetKeyDown(KeyCode.Alpha3)) {
+                _gun.ChangeGun(2); 
+                SendGun();
+            }
+            
+
+            _player.SetInput(h, v, mouseX * _mouseSensetivity, -mouseY * _mouseSensetivity);
+            if(space) _player.Jump();
+
+            if(isShoot && _gun.TryShoot(out ShootInfo shootInfo)) SendShoot(ref shootInfo);
+        }
         SendMove();
+        
+    }
+    
+    private void SendGun(){
+        Dictionary<string, object> data = new Dictionary<string, object>(){
+            {"gun", _gun.SelectedGun}
+        };
+        _multiplayerManager.SendMessage("gun", data);
     }
 
     private void SendShoot(ref ShootInfo shootInfo){
@@ -72,17 +95,15 @@ public class Controller : MonoBehaviour {
         };
         _multiplayerManager.SendMessage("squat", data);
     }
-    public void Restart(string jsonRestartInfo){
-        RestartInfo info = JsonUtility.FromJson<RestartInfo>(jsonRestartInfo);
+    public void Restart(bool value){
         StartCoroutine(Hold(_restartDelay));
-
-        _player.transform.position = new Vector3(info.x, 0f, info.z);
+        _player.transform.position = _spawn.RandomPoint().position;
         _player.SetInput(0, 0, 0, 0);
 
         Dictionary<string, object> data = new Dictionary<string, object>(){
-            {"pX", info.x},
-            {"pY", 0},
-            {"pZ", info.z},
+            {"pX", _spawn.RandomPoint().position.x},
+            {"pY", _spawn.RandomPoint().position.y},
+            {"pZ", _spawn.RandomPoint().position.z},
             {"vX", 0},
             {"vY", 0},
             {"vZ", 0},
@@ -91,6 +112,25 @@ public class Controller : MonoBehaviour {
         };
         _multiplayerManager.SendMessage("move", data);
     }
+    // public void Restart(string jsonRestartInfo){
+    //     RestartInfo info = JsonUtility.FromJson<RestartInfo>(jsonRestartInfo);
+    //     StartCoroutine(Hold(_restartDelay));
+
+    //     _player.transform.position = new Vector3(info.x, 0f, info.z);
+    //     _player.SetInput(0, 0, 0, 0);
+
+    //     Dictionary<string, object> data = new Dictionary<string, object>(){
+    //         {"pX", info.x},
+    //         {"pY", 0},
+    //         {"pZ", info.z},
+    //         {"vX", 0},
+    //         {"vY", 0},
+    //         {"vZ", 0},
+    //         {"rX", 0},
+    //         {"rY", 0}
+    //     };
+    //     _multiplayerManager.SendMessage("move", data);
+    // }
     private IEnumerator Hold(float time){
         _hold = true;
         yield return new WaitForSecondsRealtime(time);
@@ -106,9 +146,4 @@ public struct ShootInfo {
     public float dX;
     public float dY;
     public float dZ;
-}
-[Serializable]
-public struct RestartInfo{
-    public float x;
-    public float z;
 }
