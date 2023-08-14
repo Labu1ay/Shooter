@@ -99,11 +99,11 @@ public class Controller : MonoBehaviour {
         StartCoroutine(Hold(_restartDelay));
         _player.transform.position = _spawn.RandomPoint().position;
         _player.SetInput(0, 0, 0, 0);
-
+        Transform randomPosition = _spawn.RandomPoint();
         Dictionary<string, object> data = new Dictionary<string, object>(){
-            {"pX", _spawn.RandomPoint().position.x},
-            {"pY", _spawn.RandomPoint().position.y},
-            {"pZ", _spawn.RandomPoint().position.z},
+            {"pX", randomPosition.position.x},
+            {"pY", randomPosition.position.y},
+            {"pZ", randomPosition.position.z},
             {"vX", 0},
             {"vY", 0},
             {"vZ", 0},
