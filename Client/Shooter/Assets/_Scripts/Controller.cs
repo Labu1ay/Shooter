@@ -11,20 +11,33 @@ public class Controller : MonoBehaviour {
     private MultiplayerManager _multiplayerManager;
     private Squat _squat;
     private bool _hold = false;
+    private bool _hideCursor;
     private void Start() {
         _multiplayerManager = MultiplayerManager.Instance;
         _squat = GetComponent<Squat>();
+        _hideCursor = true;
+        Cursor.lockState = CursorLockMode.Locked;
     }
     private void Update() {
+        if(Input.GetKeyDown(KeyCode.Escape)){
+            _hideCursor = !_hideCursor;
+            Cursor.lockState = _hideCursor ? CursorLockMode.Locked : CursorLockMode.None;
+        }
+
         if(_hold) return;
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
 
-        float mouseX = Input.GetAxis("Mouse X");
-        float mouseY = Input.GetAxis("Mouse Y");
 
-        bool isShoot = Input.GetMouseButton(0);
-
+        float mouseX = 0;
+        float mouseY = 0;
+        bool isShoot = false;
+        if(_hideCursor){
+            mouseX = Input.GetAxis("Mouse X");
+            mouseY = Input.GetAxis("Mouse Y");
+            isShoot = Input.GetMouseButton(0);
+        }
+        
         bool space = Input.GetKeyDown(KeyCode.Space);
 
         if(Input.GetKeyDown(KeyCode.LeftControl)){
