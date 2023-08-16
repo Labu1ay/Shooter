@@ -85,22 +85,25 @@ public class Controller : MonoBehaviour {
         };
         _multiplayerManager.SendMessage("squat", data);
     }
-    public void Restart(string jsonRestartInfo){
-        RestartInfo info = JsonUtility.FromJson<RestartInfo>(jsonRestartInfo);
+    public void Restart(int spawnIndex){
+        _multiplayerManager._spawnPoints.GetPoint(spawnIndex, out Vector3 position, out Vector3 rotation);
         StartCoroutine(Hold(_restartDelay));
 
-        _player.transform.position = new Vector3(info.x, 0f, info.z);
+        _player.transform.position = position;
+        rotation.x = 0;
+        rotation.z = 0;
+        _player.transform.eulerAngles = rotation;
         _player.SetInput(0, 0, 0, 0);
 
         Dictionary<string, object> data = new Dictionary<string, object>(){
-            {"pX", info.x},
-            {"pY", 0},
-            {"pZ", info.z},
+            {"pX", position.x},
+            {"pY", position.y},
+            {"pZ", position.z},
             {"vX", 0},
             {"vY", 0},
             {"vZ", 0},
             {"rX", 0},
-            {"rY", 0}
+            {"rY", rotation.y}
         };
         _multiplayerManager.SendMessage("move", data);
     }
@@ -119,9 +122,4 @@ public struct ShootInfo {
     public float dX;
     public float dY;
     public float dZ;
-}
-[Serializable]
-public struct RestartInfo{
-    public float x;
-    public float z;
 }

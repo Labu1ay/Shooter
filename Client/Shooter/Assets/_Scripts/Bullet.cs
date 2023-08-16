@@ -24,8 +24,8 @@ public class Bullet : MonoBehaviour {
         Destroy(gameObject);
     }
     private void OnCollisionEnter(Collision other) {
-        if(other.collider.TryGetComponent(out EnemyCharacter enemy)){
-            enemy.ApplyDamage(_damage);
+        if(other.collider.TryGetComponent(out TakeDamage takeDamage)){
+            takeDamage.ApplyDamage(_damage);
         }
         Destroy();
     }
